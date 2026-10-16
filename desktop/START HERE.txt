@@ -1,0 +1,28 @@
+Kanishk
+=======
+
+To put Kanishk on this computer:
+
+    Double-click  Setup.bat
+
+That is all. It takes about half a minute.
+
+You do not need to install anything else - no internet, no admin password,
+no Node, nothing. Everything he needs is already in this folder.
+
+After that:
+
+  * Plug in Kanishk's chip (the little board on the USB cable) and he pops up
+    in the corner of the screen by himself.
+  * Unplug it and he waves goodbye.
+  * He starts with Windows from now on, quietly in the background, and waits
+    for his chip. You never have to open anything again.
+
+Talking to him:
+
+  * Click him, or press Ctrl+Alt+Space and just talk ("Hey Kanishk, ...").
+  * Right-click him for his wardrobe, tricks, modes and settings.
+
+If you ever want him gone: double-click Uninstall.bat in this folder.
+
+Made for Varuna.

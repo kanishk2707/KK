@@ -1,0 +1,75 @@
+// The only bridge between the page and the main process. The page can talk to
+// Spidey's brain, but never runs commands itself.
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
+
+const on = (channel) => (cb) => {
+  const fn = (_e, payload) => cb(payload);
+  ipcRenderer.on(channel, fn);
+  return () => ipcRenderer.removeListener(channel, fn);
+};
+
+contextBridge.exposeInMainWorld('spidey', {
+  getConfig: () => ipcRenderer.invoke('config:get'),
+  ask: (text) => ipcRenderer.send('agent:ask', text),
+  stop: () => ipcRenderer.send('agent:stop'),
+  confirmReply: (id, ok) => ipcRenderer.send('confirm:reply', { id, ok }),
+  transcribe: (wav) => ipcRenderer.invoke('stt:transcribe', wav),
+  saveOutput: (title, content) => ipcRenderer.invoke('output:save', { title, content }),
+  openExternal: (url) => ipcRenderer.send('open:external', url),
+  setInteractive: (on) => ipcRenderer.send('mouse:interactive', on),
+  focus: () => ipcRenderer.send('win:focus'),
+  dragStart: () => ipcRenderer.send('win:drag-start'),
+  drag: () => ipcRenderer.send('win:drag'),
+  dragEnd: () => ipcRenderer.send('win:drag-end'),
+  showMenu: () => ipcRenderer.send('menu:show'),
+  ttsFallback: (text) => ipcRenderer.send('tts:fallback', text),
+  micFix: () => ipcRenderer.invoke('mic:fix'),
+  openFile: (p) => ipcRenderer.invoke('file:open', p),
+  revealFile: (p) => ipcRenderer.send('file:reveal', p),
+  log: (tag, msg) => ipcRenderer.send('log', tag, String(msg)),
+
+  onFile: on('agent:file'),
+  onRetract: on('agent:retract'),
+  onComposerClose: on('composer:close'),
+  onMicFixed: on('mic:fixed'),
+  pickFiles: () => ipcRenderer.invoke('files:pick'),
+  pathForFile: (file) => webUtils.getPathForFile(file),
+  onAsk: on('ask'),
+  onHotkeyClip: on('hotkey:clip'),
+  onHotkeyScreen: on('hotkey:screen'),
+  onVisible: on('visible'),
+  onOutfitWear: on('outfit:wear'),
+  onGameStart: on('game:start'),
+  onSnipReading: on('snip:reading'),
+  onSnipResult: on('snip:result'),
+  addNote: (text) => ipcRenderer.invoke('notes:add', text),
+  wake: () => ipcRenderer.send('wake'),
+  onMove: on('move'),
+  onRest: on('rest'),
+  onGoodbye: on('goodbye'),
+  onReturn: on('return'),
+  onSenseWarn: on('sense:warn'),
+  onSense: on('sense'),
+  onFocusNudge: on('focus:nudge'),
+  onTimer: on('timer'),
+  onTimerDone: on('timer:done'),
+
+  onConfig: on('config'),
+  onBoot: on('boot'),
+  onState: on('agent:state'),
+  onStreamStart: on('agent:stream-start'),
+  onDelta: on('agent:delta'),
+  onTool: on('agent:tool'),
+  onOutput: on('agent:output'),
+  onFinal: on('agent:final'),
+  onReset: on('agent:reset'),
+  onConfirm: on('confirm:ask'),
+  onConfirmCancel: on('confirm:cancel'),
+  onHotkeyTalk: on('hotkey:talk'),
+  onHotkeyType: on('hotkey:type'),
+  onCheckin: on('checkin'),
+  onPresence: on('presence'),
+  onReminder: on('reminder'),
+  onPanelShow: on('panel:show'),
+  onTtsDone: on('tts:done'),
+});

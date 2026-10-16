@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; media-src 'self' blob:; connect-src 'self'">
+  <title>Kanishk</title>
+  <link rel="stylesheet" href="../../node_modules/katex/dist/katex.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="stage"></canvas>
+
+  <section id="panel" class="panel interactive" hidden>
+    <header class="panel-bar" id="panel-bar">
+      <span class="panel-logo" aria-hidden="true"></span>
+      <span class="panel-title" id="panel-title">Output</span>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="output" role="tab">Output</button>
+        <button class="tab" data-tab="chat" role="tab">Chat</button>
+      </nav>
+      <button class="icon-btn" id="btn-copy" title="Copy all" data-icon="copy"></button>
+      <button class="icon-btn" id="btn-save" title="Save as file" data-icon="save"></button>
+      <button class="icon-btn" id="btn-close" title="Close (Esc)" data-icon="close"></button>
+    </header>
+    <div class="panel-body md" id="panel-output"></div>
+    <div class="panel-body chat" id="panel-chat" hidden></div>
+    <footer class="panel-foot" id="panel-foot"></footer>
+  </section>
+
+  <div id="bubble" class="bubble interactive" hidden>
+    <div class="bubble-text" id="bubble-text"></div>
+    <div class="bubble-actions" id="bubble-actions"></div>
+  </div>
+
+  <div id="chip" class="chip" hidden></div>
+
+  <form id="composer" class="composer interactive" hidden autocomplete="off">
+    <div class="attachments" id="attachments" hidden></div>
+    <button type="button" class="icon-btn mic" id="btn-mic" title="Talk (Ctrl+Alt+Space)" data-icon="mic"></button>
+    <button type="button" class="icon-btn" id="btn-attach" title="Give Kanishk files (or drop them here)" data-icon="clip"></button>
+    <div class="field">
+      <input id="input" type="text" placeholder="Talk to Kanishk…" spellcheck="false">
+      <div class="meter" id="meter" hidden><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <button type="submit" class="icon-btn send" id="btn-send" title="Send (Enter)" data-icon="send"></button>
+  </form>
+
+  <canvas id="game" class="interactive" hidden></canvas>
+  <div id="game-hud" class="game-hud" hidden></div>
+
+  <div id="hit" class="hit interactive" title=""></div>
+
+  <script src="../../node_modules/marked/lib/marked.umd.js"></script>
+  <script src="../../node_modules/dompurify/dist/purify.min.js"></script>
+  <script src="../../node_modules/katex/dist/katex.min.js"></script>
+  <script src="../sprite-data.js"></script>
+  <script src="../outfits.js"></script>
+  <script src="sprite.js"></script>
+  <script src="voice.js"></script>
+  <script src="game.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

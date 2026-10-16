@@ -1,0 +1,14 @@
+# node_modules IS committed on purpose: the installer must work on a computer with no Node
+# and no npm. Only the two heavy pieces are left out (the installer downloads Electron itself,
+# and the native canvas is only needed to RENDER pdfs, which Kanishk never does).
+node_modules/electron/
+node_modules/@napi-rs/
+
+secrets.json
+config.json
+memory.json
+todo.json
+notes.md
+reminders.json
+routines.json
+runtime/

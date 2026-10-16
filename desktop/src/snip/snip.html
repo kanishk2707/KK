@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+  <title>Kanishk snip</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; cursor: crosshair; user-select: none; }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+    .tip {
+      position: fixed; left: 50%; top: 18px; transform: translateX(-50%);
+      padding: 8px 14px; background: #121427; color: #e9ecff; font: 600 15px 'Segoe UI', sans-serif;
+      box-shadow: 0 -3px 0 #160f1d, 0 3px 0 #160f1d, -3px 0 0 #160f1d, 3px 0 0 #160f1d; pointer-events: none;
+    }
+    .tip b { color: #ff6b6b; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="tip"><b>Drag</b> over what Kanishk should read &nbsp;·&nbsp; Esc to cancel</div>
+  <script src="snip.js"></script>
+</body>
+</html>

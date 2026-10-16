@@ -1,0 +1,22 @@
+{
+  "name": "kanishk-desktop-buddy",
+  "version": "1.0.0",
+  "description": "Kanishk: a pixel-art desktop companion for Varuna, with his offline brain on an ESP32 and Groq when online.",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.1.0",
+    "@fontsource/pixelify-sans": "^5.1.0",
+    "dompurify": "^3.2.0",
+    "katex": "^0.16.11",
+    "marked": "^15.0.0",
+    "pdfjs-dist": "^4.10.38",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "electron": "^37.0.0"
+  }
+}

@@ -1,0 +1,36 @@
+# Private: API keys and her own data. These must never leave this computer.
+desktop/secrets.json
+desktop/config.json
+desktop/memory.json
+desktop/todo.json
+desktop/notes.md
+desktop/reminders.json
+desktop/routines.json
+firmware/kanishk/secrets.h
+
+# Big pieces the installer downloads at install time instead of carrying in git
+desktop/node_modules/electron/
+desktop/runtime/models/
+desktop/runtime/whisper/
+desktop/runtime/*.log
+desktop/runtime/*.jsonl
+desktop/runtime/outfits/
+desktop/runtime/clips/
+desktop/runtime/undo/
+*.zip
+build/
+
+# This board's own flash dump (device specific)
+backup/
+
+# Build and test leftovers
+test/*.exe
+test/ref.txt
+test/ours*.txt
+test/win.c
+test/win.h
+test/run_ref.c
+*.log
+
+# native canvas: only needed to RENDER pdfs; Kanishk only reads their text
+desktop/node_modules/@napi-rs/
