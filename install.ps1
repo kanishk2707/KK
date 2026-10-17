@@ -185,6 +185,8 @@ $WORK = {
       -Value "`"$exe`" `"$InstallDir`" --hidden" -PropertyType String -Force | Out-Null
 
     Step 'Waking him up...' 100
+    # if this was started from an editor's terminal, Electron could inherit "run as plain Node" and quit
+    Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
     Start-Process -FilePath $exe -ArgumentList "`"$InstallDir`"", '--hidden' -WorkingDirectory $InstallDir
     Start-Sleep -Seconds 2
   } catch {
