@@ -16,7 +16,8 @@ class Chip extends EventEmitter {
     this.port = null;
     this.info = null;
     this.rx = '';
-    this.queue = [];          // waiting for replies, oldest first (the chip answers in order)
+    this.queue = [];          // waiting for replies; each is matched by the id the chip echoes back
+    this.nextId = 1;
     this.chain = Promise.resolve();
     this.notKanishk = new Set();   // ports with some other board on them (skip until replugged)
     this.ports = [];
@@ -122,7 +123,11 @@ class Chip extends EventEmitter {
     if (line === '@Kready') { if (!this.info && this.bridge) this.handshake(this.bridge, 0); return; }
     let msg;
     try { msg = JSON.parse(line.slice(2)); } catch { return; }
-    const w = this.queue.shift();
+    // match by id, so a late answer to a request that already timed out (say, an extra "hello"
+    // while the chip was rebooting) can't be mistaken for the answer to the next one
+    const k = msg.id != null ? this.queue.findIndex((q) => q.id === msg.id) : 0;
+    if (k < 0) return;
+    const [w] = this.queue.splice(k, 1);
     if (w) w.resolve(msg);
   }
 
@@ -131,12 +136,12 @@ class Chip extends EventEmitter {
     const run = () => new Promise((resolve, reject) => {
       const b = this.bridge;
       if (!b) return reject(new Error('no chip'));
-      const w = {};
+      const w = { id: this.nextId++ };
       const t = setTimeout(() => { const k = this.queue.indexOf(w); if (k >= 0) this.queue.splice(k, 1); reject(new Error('chip timeout')); }, timeoutMs);
       w.resolve = (v) => { clearTimeout(t); resolve(v); };
       w.reject = (e) => { clearTimeout(t); reject(e); };
       this.queue.push(w);
-      try { b.stdin.write(JSON.stringify(cmd) + '\n'); } catch (e) { w.reject(e); }
+      try { b.stdin.write(JSON.stringify({ ...cmd, id: w.id }) + '\n'); } catch (e) { w.reject(e); }
     });
     const p = this.chain.then(run, run);
     this.chain = p.catch(() => {});
