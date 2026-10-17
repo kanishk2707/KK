@@ -89,6 +89,18 @@ function createWindow() {
 
 // ---------- tray + menu ----------
 
+// When the chip can't reach him, say why (a Windows notification) instead of staying invisible.
+const told = new Set();
+function tellOnce(key, body, onClick) {
+  if (told.has(key)) return;
+  told.add(key);
+  log('chip', body);
+  if (!Notification.isSupported()) return;
+  const n = new Notification({ title: 'Kanishk', body, icon: trayIcon() });
+  if (onClick) n.on('click', onClick);
+  n.show();
+}
+
 function trayIcon() {
   const head = SpriteData.composeHead('normal');
   const size = 32, scale = 2, off = 1;
@@ -864,6 +876,10 @@ app.whenReady().then(() => {
       arrive(info).catch((e) => log('chip', e.stack || String(e)));
     });
     chip.on('disconnected', () => leave());
+    chip.on('nodriver', ({ name }) => tellOnce('nodriver',
+      `My chip is plugged in, but Windows doesn't have its USB driver yet (${name}). Click here, right-click slabvcp.inf, choose Install, then plug me in again.`,
+      () => shell.openPath(path.join(config.ROOT, 'driver', 'cp210x'))));
+    chip.on('busy', (port) => tellOnce('busy', `Something else is using my chip's port (${port}). Close it (the Arduino serial monitor, for example) and I'll pop right up.`));
     chip.start();
   };
   startWatching();

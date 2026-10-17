@@ -36,6 +36,8 @@ class Chip extends EventEmitter {
       while ((i = buf.indexOf('\n')) >= 0) {
         const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
         if (line.startsWith('PORTS')) this.onPorts(line.slice(5).trim().split(',').filter(Boolean));
+        // a chip is plugged in but Windows has no USB driver for it, so it has no port
+        else if (line.startsWith('NODRIVER ')) { const [vid, ...name] = line.slice(9).split(' '); this.emit('nodriver', { vid, name: name.join(' ') }); }
       }
     });
     this.watcher.on('exit', () => { this.watcher = null; if (!this.stopped) setTimeout(() => this.start(), 2000); });   // keep watching
@@ -72,7 +74,13 @@ class Chip extends EventEmitter {
         this.onLine(line);
       }
     });
-    b.stderr.on('data', (d) => { const s = String(d).trim(); if (s) this.log('chip', s); });
+    b.stderr.on('data', (d) => {
+      const s = String(d).trim();
+      if (!s) return;
+      this.log('chip', s);
+      // another program has the port open (the Arduino serial monitor, say)
+      if (/BRIDGE_OPEN_FAILED/.test(s) && /denied|in use|busy/i.test(s)) this.emit('busy', port);
+    });
     // the link dropped: if the chip is still plugged in (a hiccup, not an unplug), connect again
     b.on('exit', () => { if (this.bridge === b) { this.closeBridge(); setTimeout(() => this.onPorts(this.ports), 1500); } });
     this.handshake(b, 0);

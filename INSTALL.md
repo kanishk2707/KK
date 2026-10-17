@@ -44,3 +44,21 @@ To give it one, either:
 - run the installer with the key: `powershell -ExecutionPolicy Bypass -File install.ps1 -GroqKey gsk_...`
 
 Never commit `secrets.json` or paste keys into the repo: anyone can read it.
+
+## If he doesn't show up after installing
+
+He only appears while his chip is plugged in. If it is plugged in and he still doesn't appear, he
+usually says why in a Windows notification:
+
+- **"Windows doesn't have its USB driver yet"**: the chip's USB chip (Silicon Labs CP210x) needs a
+  driver, which Windows Update usually adds by itself but not always. Click the notification (or open
+  `%LOCALAPPDATA%\Kanishk\driver\cp210x`), right-click `slabvcp.inf`, choose **Install**, say Yes,
+  then unplug the chip and plug it back in.
+- **"Something else is using my chip's port"**: close the other program (the Arduino IDE's serial
+  monitor, for example) and he pops up.
+
+On a school or work computer, the administrator may block the small PowerShell scripts he uses to
+watch for his chip; that needs the administrator's OK.
+
+Anything else: press Win+R, paste `%LOCALAPPDATA%\Kanishk\runtime\kanishk.log`, press Enter, and the
+last lines say what happened.
