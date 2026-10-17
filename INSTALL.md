@@ -2,45 +2,45 @@
 
 ## On a computer that already has him
 
-Nothing to do. He starts with Windows, waits quietly in the background, and the moment his chip is
-plugged into USB he pops up in the corner. Unplug it and he leaves. That is the whole experience.
+Nothing to do. He starts with Windows, waits quietly in the background, and pops up the moment his
+chip is plugged into USB. Unplug it and he leaves.
 
-## On a computer that has never met him
+## On a new computer
 
-Copy **`Kanishk-Setup.zip`** (306 MB) onto it — USB stick, email, OneDrive, anything — then:
+1. Get **`Install Kanishk.bat`** onto it: download it from <https://github.com/kanishk2707/KK>
+   (open the file, then "Download raw file"), or carry it on a USB stick.
+2. Double-click it and click **Allow**.
 
-1. Right-click the zip → **Extract All**
-2. Open the `Kanishk` folder → double-click **`Setup.bat`**
+That is the only thing anyone does. After "Allow" the installer works on its own:
 
-About 30 seconds later he is installed and running, and from then on that computer behaves like the
-one above: plug in the chip, he appears. Nothing else is ever needed.
+- downloads him (about 314 MB: his app from this repo, Electron, and his voice model), with a progress
+  bar showing how far along it is
+- rides out short internet dropouts, and carries on from where it stopped instead of starting over
+- sets him up in `%LOCALAPPDATA%\Kanishk` (no admin password needed)
+- makes him start with Windows
+- starts him
 
-The package carries **everything**: he needs no internet to install, no admin password, no Node, no
-Electron, no Visual C++ redistributable (his voice engine's runtime DLLs are bundled too). It installs
-to `%LOCALAPPDATA%\Kanishk`, which needs no permissions.
+Then plug in his chip and he pops up in the corner.
 
-Running `Setup.bat` again later just updates him and keeps her settings, list, notes and saved outfits.
-`Uninstall.bat` removes him completely.
+Running the installer again later updates him and keeps her settings, list, notes and outfits.
+`Uninstall.bat` (in `%LOCALAPPDATA%\Kanishk`) removes him; it asks first.
 
-## Why there is one double-click, and not zero
+Needs Windows 10 (version 1809 or later) or Windows 11, internet during the install, and about 1 GB free.
 
-The chip is an **ESP32-D0WDQ6 with a CP210x USB-to-serial bridge**. Over USB it can only ever appear as
-a *serial port* — it has no native USB hardware, so it cannot pretend to be a USB drive or a keyboard.
-On top of that, Windows has refused to auto-run programs from anything plugged into USB since 2011
-(that is how USB-stick viruses used to spread).
+## Why the chip can't start the install by itself
 
-So on a computer that has never seen Kanishk, there is nothing the chip itself can do to install him:
-Windows simply will not run code from a device. Someone has to start the installer once. After that one
-double-click, the computer remembers him forever and everything is automatic.
+The chip is an ESP32 with a USB-to-serial bridge, so when it is plugged in Windows sees only a serial
+port. Windows never runs programs from a plugged-in device (it stopped allowing that in 2011, because
+that is how USB viruses spread), and a serial port cannot show a prompt. So on a computer that has
+never met Kanishk, someone opens the installer once. After that, plugging in the chip is all it takes.
 
-The only way to get closer to zero on a brand-new machine would be a different board with native USB
-(ESP32-S2/S3) pretending to be a keyboard that types the setup commands by itself. That is exactly the
-technique "BadUSB" attacks use, antivirus blocks it, and it would make Kanishk look like malware — so
-it is not worth doing to save one click.
+## His Groq key on a new computer
 
-## Keeping the keys private
+This repo is public, so his Groq keys are not in it. On a computer installed from GitHub he works
+straight away, but answers with his chip brain (the offline mode) until that computer has a key.
+To give it one, either:
 
-`secrets.json` inside the package holds the Groq API keys, so he works the moment he is installed.
-That means **anyone who gets the zip gets the keys**. Keep it to yourself and to her computers. If you
-want to publish it (GitHub, a website), delete `secrets.json` from the package first — he will still
-run, and will use his chip brain until keys are added back.
+- copy `secrets.json` from a computer that has it into `%LOCALAPPDATA%\Kanishk\`, or
+- run the installer with the key: `powershell -ExecutionPolicy Bypass -File install.ps1 -GroqKey gsk_...`
+
+Never commit `secrets.json` or paste keys into the repo: anyone can read it.

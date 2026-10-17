@@ -10,9 +10,10 @@ look at the screen, routines, phone notifications...).
 On a computer that already has him: **nothing to do, ever.** He starts with Windows, waits in the
 background, and pops up when his chip is plugged in.
 
-On a new computer: copy `Kanishk-Setup.zip`, extract it, double-click `Setup.bat` once (~30 s, no
-internet, no admin, nothing to pre-install). After that it behaves like the first case.
-See [INSTALL.md](INSTALL.md), which also explains why that one double-click can't be avoided.
+On a new computer: double-click **`Install Kanishk.bat`** (from this repo) and click **Allow**. The rest
+is automatic: it downloads him with a progress bar, sets him up, makes him start with Windows and starts
+him. No admin password, nothing to pre-install. See [INSTALL.md](INSTALL.md), which also explains why
+the chip itself can't start the install, and how a new computer gets his Groq key.
 
 ## How it works
 
@@ -45,7 +46,8 @@ See [INSTALL.md](INSTALL.md), which also explains why that one double-click can'
 ## Folders
 
 ```
-Kanishk-Setup.zip    the whole app, ready to install on any Windows PC (extract, run Setup.bat)
+Install Kanishk.bat  double-click on any Windows PC: asks once, then installs and starts him
+install.ps1          the installer it runs (downloads, progress window, set up, start with Windows)
 desktop/             the Kanishk app (Spidey's code, renamed, with a Groq brain and the chip link)
   src/main.js          window, tray, auto-start, pops up / leaves with the chip
   src/agent.js         his brain loop: Groq (only the tools a request needs, to fit Groq's free limits),
@@ -54,15 +56,15 @@ desktop/             the Kanishk app (Spidey's code, renamed, with a Groq brain 
                        tells "no internet" apart from other errors
   src/chip.js          USB link to the chip (chip-watch.ps1 notices plug-in; serial-bridge.ps1 talks to it)
   src/tools.js         everything he can do on the computer (Spidey's tools)
-  secrets.json         the Groq keys (private - see INSTALL.md before sharing the package)
-  Setup.bat            installs him on this computer (no admin, no internet, nothing pre-installed)
-  Uninstall.bat        removes him again
+  secrets.json         the Groq keys (private: never in git, see INSTALL.md)
+  vcruntime/           Visual C++ runtime DLLs for his voice engine (for PCs that lack them)
+  Uninstall.bat        removes him again (asks first)
   config.json          settings (created on first run)
 firmware/kanishk/    the chip: offline brain (brain.cpp), tiny story model (llm.cpp + model_data.h)
 model/               stories260K.bin + tok512.bin (karpathy/tinyllamas, MIT)
 tools/               build_assets.py (packs the model for the firmware), serial_test.ps1 (talk to the chip)
 test/                native tests of the chip brain and the story model
-backup/              original_firmware_4MB.bin: what was on the ESP32 before Kanishk
+backup/              original_firmware_4MB.bin: what was on the ESP32 before Kanishk (local only)
 ```
 
 ## Re-flashing the chip
@@ -87,7 +89,7 @@ Restore the original firmware:
   ("One sec, Varuna...") instead of failing.
 - On a computer without this app installed, plugging in the chip does nothing: Windows never runs
   programs from a USB device by itself (and this board can only appear as a serial port). Run
-  `Setup.bat` from `Kanishk-Setup.zip` once on that machine; after that he pops up by himself forever.
+  `Install Kanishk.bat` once on that machine; after that he pops up by himself forever.
 - The Groq keys were shared in a chat while this was built; consider making new ones at console.groq.com
   and putting them in `desktop/secrets.json`.
 

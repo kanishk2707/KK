@@ -46,7 +46,8 @@ async function send(body, opts = {}) {
   if (Date.now() - lastOffline < 20000) throw new OfflineError('offline (recently checked)');
   const cfg = config.load();
   const list = buckets(opts.models || cfg.groq.models);
-  if (!list.length) throw new Error('No Groq API keys in secrets.json');
+  // no Groq key on this computer: his chip brain answers instead of an error
+  if (!list.length) throw new OfflineError('no Groq key on this computer');
   const deadline = Date.now() + (opts.maxWaitMs ?? 75000);
   let lastErr = null, netFails = 0;
   for (;;) {
