@@ -36,14 +36,10 @@ never met Kanishk, someone opens the installer once. After that, plugging in the
 
 ## His Groq key on a new computer
 
-This repo is public, so his Groq keys are not in it. On a computer installed from GitHub he works
-straight away, but answers with his chip brain (the offline mode) until that computer has a key.
-To give it one, either:
-
-- copy `secrets.json` from a computer that has it into `%LOCALAPPDATA%\Kanishk\`, or
-- run the installer with the key: `powershell -ExecutionPolicy Bypass -File install.ps1 -GroqKey gsk_...`
-
-Never commit `secrets.json` or paste keys into the repo: anyone can read it.
+Nothing to do: his chip carries his Groq keys and hands them to the computer he is running on (kept in
+memory only), so a computer installed from GitHub gets his cloud brain as soon as the chip is plugged in.
+The keys live in `firmware/kanishk/secrets.h` and `desktop/secrets.json`, which are both kept out of
+this public repo. Never commit them or paste keys into the repo: anyone can read it.
 
 ## If he doesn't show up after installing
 
