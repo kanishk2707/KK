@@ -859,7 +859,10 @@ app.whenReady().then(() => {
   const startWatching = () => {
     if (!pageLoaded) return setTimeout(startWatching, 200);
     chip = new Chip(log);
-    chip.on('connected', (info) => arrive(info).catch((e) => log('chip', e.stack || String(e))));
+    chip.on('connected', (info) => {
+      groq.setChipKeys(chip.keys);
+      arrive(info).catch((e) => log('chip', e.stack || String(e)));
+    });
     chip.on('disconnected', () => leave());
     chip.start();
   };

@@ -14,9 +14,15 @@
 #include "brain.h"
 #include "llm.h"
 #include "model_data.h"
+// His Groq keys live in secrets.h (in .gitignore, never pushed). Without it he builds with none.
+#if __has_include("secrets.h")
+#include "secrets.h"
+#else
+static const char* GROQ_KEYS[] = { "" };
+#endif
 
 static const char* NAME = "Kanishk";
-static const int FW_VERSION = 3;
+static const int FW_VERSION = 4;
 static brain::Clock clk;
 static int64_t timeBase = 0;           // unix time at boot, learned from the PC
 
@@ -115,6 +121,10 @@ static void handleCommand(JsonDocument& in) {
     if (in["start"].as<bool>()) out["started"] = startStory(in["about"] | "");
     xSemaphoreTake(storyLock, portMAX_DELAY); out["text"] = storyBuf; xSemaphoreGive(storyLock);
     out["done"] = !storyRunning; out["tokens"] = storyTokens; out["tps"] = round(storyTps * 10) / 10;
+
+  } else if (cmd == "keys") {                      // his Groq keys, for a computer that doesn't have them
+    JsonArray a = out["keys"].to<JsonArray>();
+    for (const char* k : GROQ_KEYS) if (strncmp(k, "gsk_", 4) == 0) a.add(k);
 
   } else if (cmd == "status") {
     out["name"] = NAME; out["fw"] = FW_VERSION;

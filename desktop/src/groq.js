@@ -13,8 +13,14 @@ const NET_ERR = /ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ENETUNREACH|EHOSTUNREACH|ECONN
 const cool = new Map();         // "model|keyIndex" -> epoch ms when usable again
 let lastOk = 0, lastOffline = 0;
 
+// His keys: this computer's own (secrets.json), or else the ones his chip carries (see chip.js).
+// Keys from the chip are kept in memory only.
+let chipKeys = [];
+function setChipKeys(keys) { chipKeys = (Array.isArray(keys) ? keys : []).filter((k) => typeof k === 'string' && k.length > 10); }
+function allKeys() { const own = config.loadSecrets().groqKeys || []; return own.length ? own : chipKeys; }
+
 function buckets(models) {
-  const keys = config.loadSecrets().groqKeys || [];
+  const keys = allKeys();
   const out = [];
   for (const model of models) keys.forEach((key, i) => out.push({ model, key, id: `${model}|${i}` }));
   return out;
@@ -116,7 +122,7 @@ async function complete(messages, { maxTokens = 1200, temperature = 0.6, json = 
 async function online() {
   if (Date.now() - lastOk < 60000) return true;
   try {
-    const r = await fetch('https://api.groq.com/openai/v1/models', { headers: { Authorization: `Bearer ${(config.loadSecrets().groqKeys || [])[0] || ''}` }, signal: AbortSignal.timeout(5000) });
+    const r = await fetch('https://api.groq.com/openai/v1/models', { headers: { Authorization: `Bearer ${allKeys()[0] || ''}` }, signal: AbortSignal.timeout(5000) });
     if (r.status < 500) { lastOk = Date.now(); return true; }
     return false;
   } catch (e) { if (isNetError(e) || e.name === 'TimeoutError' || e.name === 'AbortError') lastOffline = Date.now(); return false; }
@@ -124,4 +130,4 @@ async function online() {
 
 function markOffline() { lastOffline = Date.now(); }
 
-module.exports = { send, complete, online, OfflineError, isNetError, markOffline };
+module.exports = { send, complete, online, OfflineError, isNetError, markOffline, setChipKeys };

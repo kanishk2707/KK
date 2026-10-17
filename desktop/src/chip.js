@@ -86,6 +86,8 @@ class Chip extends EventEmitter {
       if (r && r.name === 'Kanishk') {
         this.info = { port: this.port, name: r.name, fw: r.fw, model: r.model };
         this.log('chip', `Kanishk's chip on ${this.port} (fw ${r.fw})`);
+        this.keys = await this.readKeys().catch(() => []);
+        if (this.bridge !== b) return;
         this.emit('connected', this.info);
         return;
       }
@@ -94,6 +96,14 @@ class Chip extends EventEmitter {
     } catch {}
     if (tries < 8) setTimeout(() => this.handshake(b, tries + 1), 600);
     else { this.log('chip', `${this.port} never answered`); this.notKanishk.add(this.port); this.closeBridge(); this.onPorts(this.ports); }
+  }
+
+  // His chip carries his Groq keys, so a computer that has never met him gets his cloud brain too.
+  async readKeys() {
+    const r = await this.send({ cmd: 'keys' }, 2500);
+    const keys = r && Array.isArray(r.keys) ? r.keys : [];
+    this.log('chip', `his chip carries ${keys.length} Groq key(s)`);
+    return keys;
   }
 
   closeBridge() {
